@@ -1,0 +1,29 @@
+# HERE IS CODE FOR PERMISSION SET TEMPLATE
+
+# locals {
+#   arn_path = "${var.is_job_function ? "job-function/" : ""}${var.aws_managed_policy}" # ARN is different depending on whether the it's a standalone vs a job function
+# }
+
+# resource "aws_ssoadmin_permission_set" "this" {
+#   name             = var.aws_managed_policy
+#   description      = var.aws_managed_policy
+#   instance_arn     = tolist(data.aws_ssoadmin_instances.this.arns)[0]
+#   session_duration = var.session_duration
+#   tags             = local.common_tags
+# }
+
+# resource "aws_ssoadmin_managed_policy_attachment" "this" {
+#   instance_arn       = tolist(data.aws_ssoadmin_instances.this.arns)[0]
+#   permission_set_arn = aws_ssoadmin_permission_set.this.arn
+#   managed_policy_arn = "arn:aws:iam::aws:policy/${local.arn_path}"
+# }
+
+# data "aws_ssoadmin_permission_set" "this" {
+#   instance_arn = tolist(data.aws_ssoadmin_instances.this.arns)[0]
+#   name         = var.aws_managed_policy
+#   depends_on   = [aws_ssoadmin_permission_set.this]
+# }
+
+#  END OF PERMISSION TEMPLATE
+
+### FILE Defines ALL PERMISSION SETS IN Sections
