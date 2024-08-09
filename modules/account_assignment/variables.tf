@@ -13,9 +13,3 @@ variable "aws_identitystore_groups" {
   description = "Groups to assign the AWS account to"
   type        = map(string)
 }
-
-variable "session_time" {
-  description = "length of default sessions"
-  type        = string
-  default     = "PT1H"
-}

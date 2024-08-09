@@ -25,6 +25,10 @@ locals {
   }
 }
 
+locals {
+  session_duration = "PT1H"
+}
+
 ## SECTION 1 - AWS MANAGED
 
 # AWS-Administrator
@@ -32,7 +36,7 @@ resource "aws_ssoadmin_permission_set" "AWS-Administrator" {
   description      = "AWS-Administrator"
   instance_arn     = tolist(data.aws_ssoadmin_instances.this.arns)[0]
   name             = "AWS-Administrator"
-  session_duration = var.session_duration
+  session_duration = local.session_duration
   tags             = local.common_tags
 }
 
@@ -53,7 +57,7 @@ resource "aws_ssoadmin_permission_set" "AWS-Billing-Administrator" {
   description      = "AWS-Billing-Administrator"
   instance_arn     = tolist(data.aws_ssoadmin_instances.this.arns)[0]
   name             = "AWS-Billing-Administrator"
-  session_duration = var.session_duration
+  session_duration = local.session_duration
   tags             = local.common_tags
 }
 
@@ -75,7 +79,7 @@ data "aws_ssoadmin_permission_set" "AWS-Billing-Administrator" {
 #   description      = "AWS-Database-Administrator"
 #   instance_arn     = tolist(data.aws_ssoadmin_instances.this.arns)[0]
 #   name             = "AWS-Database-Administrator"
-#   session_duration = var.session_duration
+#   session_duration = local.session_duration
 #   tags             = local.common_tags
 # }
 
@@ -96,7 +100,7 @@ data "aws_ssoadmin_permission_set" "AWS-Billing-Administrator" {
 #   description      = "AWS-DataScientist"
 #   instance_arn     = tolist(data.aws_ssoadmin_instances.this.arns)[0]
 #   name             = "AWS-DataScientist"
-#   session_duration = var.session_duration
+#   session_duration = local.session_duration
 #   tags             = local.common_tags
 # }
 
@@ -117,7 +121,7 @@ data "aws_ssoadmin_permission_set" "AWS-Billing-Administrator" {
 #   description      = "AWS-NetworkAdministrator"
 #   instance_arn     = tolist(data.aws_ssoadmin_instances.this.arns)[0]
 #   name             = "AWS-NetworkAdministrator"
-#   session_duration = var.session_duration
+#   session_duration = local.session_duration
 #   tags             = local.common_tags
 # }
 
@@ -138,7 +142,7 @@ data "aws_ssoadmin_permission_set" "AWS-Billing-Administrator" {
 #   description      = "AWS-PowerUserAccess"
 #   instance_arn     = tolist(data.aws_ssoadmin_instances.this.arns)[0]
 #   name             = "AWS-PowerUserAccess"
-#   session_duration = var.session_duration
+#   session_duration = local.session_duration
 #   tags             = local.common_tags
 # }
 
@@ -159,7 +163,7 @@ data "aws_ssoadmin_permission_set" "AWS-Billing-Administrator" {
 #   description      = "AWS-ReadOnlyAccess"
 #   instance_arn     = tolist(data.aws_ssoadmin_instances.this.arns)[0]
 #   name             = "AWS-ReadOnlyAccess"
-#   session_duration = var.session_duration
+#   session_duration = local.session_duration
 #   tags             = local.common_tags
 # }
 
@@ -180,7 +184,7 @@ data "aws_ssoadmin_permission_set" "AWS-Billing-Administrator" {
 #   description      = "AWS-SecurityAudit"
 #   instance_arn     = tolist(data.aws_ssoadmin_instances.this.arns)[0]
 #   name             = "AWS-SecurityAudit"
-#   session_duration = var.session_duration
+#   session_duration = local.session_duration
 #   tags             = local.common_tags
 # }
 
@@ -201,7 +205,7 @@ data "aws_ssoadmin_permission_set" "AWS-Billing-Administrator" {
 #   description      = "AWS-SupportUser"
 #   instance_arn     = tolist(data.aws_ssoadmin_instances.this.arns)[0]
 #   name             = "AWS-SupportUser"
-#   session_duration = var.session_duration
+#   session_duration = local.session_duration
 #   tags             = local.common_tags
 # }
 
@@ -222,7 +226,7 @@ data "aws_ssoadmin_permission_set" "AWS-Billing-Administrator" {
 #   description      = "AWS-SystemAdministrator"
 #   instance_arn     = tolist(data.aws_ssoadmin_instances.this.arns)[0]
 #   name             = "AWS-SystemAdministrator"
-#   session_duration = var.session_duration
+#   session_duration = local.session_duration
 #   tags             = local.common_tags
 # }
 
@@ -243,7 +247,7 @@ data "aws_ssoadmin_permission_set" "AWS-Billing-Administrator" {
 #   description      = "AWS-ViewOnlyAccess"
 #   instance_arn     = tolist(data.aws_ssoadmin_instances.this.arns)[0]
 #   name             = "AWS-ViewOnlyAccess"
-#   session_duration = var.session_duration
+#   session_duration = local.session_duration
 #   tags             = local.common_tags
 # }
 
