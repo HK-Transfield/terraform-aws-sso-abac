@@ -1,4 +1,11 @@
 terraform {
+  cloud {
+    organization = "HKT-Projects"
+
+    workspaces {
+      name = "aws-abac"
+    }
+  }
   required_providers {
     aws = {
       source  = "hashicorp/aws"
