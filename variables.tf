@@ -1,6 +1,12 @@
 variable "region" {
+  description = "The AWS region to deploy the infrastructure to"
+  type        = string
+  default     = ""
+}
+
+variable "account_id" {
   type    = string
-  default = "ap-southeast-2"
+  default = ""
 }
 
 # This tag will only allow access to resources with same tag
