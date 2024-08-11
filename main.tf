@@ -1,52 +1,331 @@
-data "aws_ssoadmin_instances" "this" {} # need to grab the sso instance data
+/***************************************************************
+  Title: AWS Attribute-based Access Control with Terraform
 
-/*
-SECTION 1: Define Custom Inline Policies
-*/
+  Description: Defines permissions to access AWS resources
+  based on tags (ABAC) This follows the tutorial found in 
+  the AWS IAM User guide:
+  https://docs.aws.amazon.com/IAM/latest/UserGuide/tutorial_attribute-based-access-control.html
 
-module "sso_power_user" {
-  source             = "./modules/inline_policies"
-  inline_policy_name = "SSO-Power-User"
-  project_tag_key    = "MyApp"
-  project_tag_value  = var.project_tag
+  Contributors: HK Transfield
+****************************************************************/
 
-  conditional_actions = [
-    "s3:GetObject",
+# Grab the SSO instance data
+# data "aws_ssoadmin_instances" "this" {} 
 
-    "s3:PutObject",
-    "s3:DeleteObject",
-    "s3:ListBucketMultipartUploads",
-    "s3:AbortMultipartUpload",
-    "s3:ListMultipartUploadParts"
-  ]
-
-  nonconditional_actions = [
-    "s3:ListAllMyBuckets",
-    "s3:ListBucket",
-  ]
+locals {
+  peg_project = "peg" # Pegasus project
+  uni_project = "uni" # Unicorn project
 }
 
-### Add Custom Inline Policies
-module "terraformer_account_assignment" {
-  source                 = "./modules/account_assignment"
-  aws_account_identifier = "211125790048"
+locals {
+  eng_team = "eng" # Engineering team
+  qas_team = "qas" # Quality Assurance team
+}
 
-  aws_identitystore_groups = {
-    (module.sso_power_user.group_id) = (module.sso_power_user.arn)
+locals {
+  peg_cc = "987654"
+  uni_cc = "123456"
+}
+
+/***************************************************************
+  SECTION 1: Creating the Users
+
+  To test ABAC, create users with permissions to assume roles
+  with the same tags. This process makes it easier to add more
+  users to a team.
+
+  When tagging users, they automatically get access to assume
+  the correct role.
+
+  Users do not need to be added to the trust policy of the role
+  if they work on only one project or team
+
+****************************************************************/
+
+# This policy allows a user to assume any role in an
+# AWS account with the 'access-' name prefix. The 
+# role must be tagged with the same project, team,
+# and cost center tags as the user
+data "aws_iam_policy_document" "access_assume_role" {
+  statement {
+    sid       = "AssumeRole"
+    effect    = "Allow"
+    resources = ["arn:aws:iam::${var.account_id}:role/access-*"]
+    actions   = ["sts:AssumeRole"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "iam:ResourceTag/access-project"
+      values   = ["$${aws:PrincipalTag/access-project}"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "iam:ResourceTag/access-team"
+      values   = ["$${aws:PrincipalTag/access-team}"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "iam:ResourceTag/cost-center"
+      values   = ["$${aws:PrincipalTag/cost-center}"]
+    }
   }
 }
 
-/*
-SECTION 2: Assign accounts
-*/
+resource "aws_iam_policy" "access_assume_role" {
+  name   = "access-assume-role"
+  policy = data.aws_iam_policy_document.access_assume_role.json
+}
 
-### Add Managed policies
-module "sandbox_account_assignment" {
-  source                 = "./modules/account_assignment"
-  aws_account_identifier = "339712731943"
+# Create an IAM group for scaling the number of users
+resource "aws_iam_group" "this" {
+  name = "assume-role-users"
+  path = "/"
+}
 
-  aws_identitystore_groups = {
-    (data.aws_identitystore_group.AWS-Administrator.group_id)         = (data.aws_ssoadmin_permission_set.AWS-Administrator.arn)
-    (data.aws_identitystore_group.AWS-Billing-Administrator.group_id) = (data.aws_ssoadmin_permission_set.AWS-Billing-Administrator.arn)
+# Attach the 'access_assume_role' permissions policy
+resource "aws_iam_group_policy_attachment" "this" {
+  group      = aws_iam_group.this.name
+  policy_arn = aws_iam_policy.access_assume_role.arn
+}
+
+# Create IAM users and add each user to the group
+resource "aws_iam_user" "Arnav" {
+  name = "access-Arnav-peg-eng"
+  path = "/"
+
+  tags = {
+    access-project = local.peg_project
+    access-team    = local.eng_team
+    cost-center    = local.peg_cc
   }
 }
+
+resource "aws_iam_user_group_membership" "Arnav" {
+  user   = aws_iam_user.Arnav.name
+  groups = [aws_iam_group.this.name]
+}
+
+
+resource "aws_iam_user" "Mary" {
+  name = "access-Mary-peg-qas"
+  path = "/"
+
+  tags = {
+    access-project = local.peg_project
+    access-team    = local.qas_team
+    cost-center    = local.peg_cc
+  }
+}
+
+resource "aws_iam_user_group_membership" "Mary" {
+  user   = aws_iam_user.Mary.name
+  groups = [aws_iam_group.this.name]
+}
+
+resource "aws_iam_user" "Saanvi" {
+  name = "access-Saanvi-uni-eng"
+  path = "/"
+
+  tags = {
+    access-project = local.uni_project
+    access-team    = local.eng_team
+    cost-center    = local.uni_cc
+  }
+}
+
+resource "aws_iam_user_group_membership" "Saanvi" {
+  user   = aws_iam_user.Saanvi.name
+  groups = [aws_iam_group.this.name]
+}
+
+resource "aws_iam_user" "Carlos" {
+  name = "access-Carlos-uni-qas"
+  path = "/"
+
+  tags = {
+    access-project = local.uni_project
+    access-team    = local.qas_team
+    cost-center    = local.uni_cc
+  }
+}
+
+resource "aws_iam_user_group_membership" "Carlos" {
+  user   = aws_iam_user.Carlos.name
+  groups = [aws_iam_group.this.name]
+}
+
+/***************************************************************
+  SECTION 2: Creating the ABAC policy
+
+****************************************************************/
+
+# The policy allows principals to create, read, edit, and delete
+# resources tagged with the same key-value pairs as the principal.
+# When a principal creates a resource, they must add all tags with
+# values matching the principal's tag.
+data "aws_iam_policy_document" "access_same_project_team" {
+  statement {
+    sid       = "AllActionsSecretsManagerSameProjectSameTeam"
+    effect    = "Allow"
+    resources = ["*"]
+    actions   = ["secretsmanager:*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceTag/access-project"
+      values   = ["$${aws:PrincipalTag/access-project}"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceTag/access-team"
+      values   = ["$${aws:PrincipalTag/access-team}"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceTag/cost-center"
+      values   = ["$${aws:PrincipalTag/cost-center}"]
+    }
+
+    condition {
+      test     = "ForAllValues:StringEquals"
+      variable = "aws:TagKeys"
+
+      values = [
+        "access-project",
+        "access-team",
+        "cost-center",
+        "Name",
+        "OwnedBy",
+      ]
+    }
+
+    condition {
+      test     = "StringEqualsIfExists"
+      variable = "aws:RequestTag/access-project"
+      values   = ["$${aws:PrincipalTag/access-project}"]
+    }
+
+    condition {
+      test     = "StringEqualsIfExists"
+      variable = "aws:RequestTag/access-team"
+      values   = ["$${aws:PrincipalTag/access-team}"]
+    }
+
+    condition {
+      test     = "StringEqualsIfExists"
+      variable = "aws:RequestTag/cost-center"
+      values   = ["$${aws:PrincipalTag/cost-center}"]
+    }
+  }
+
+  statement {
+    sid       = "AllResourcesSecretsManagerNoTags"
+    effect    = "Allow"
+    resources = ["*"]
+
+    actions = [
+      "secretsmanager:GetRandomPassword",
+      "secretsmanager:ListSecrets",
+    ]
+  }
+
+  statement {
+    sid       = "ReadSecretsManagerSameTeam"
+    effect    = "Allow"
+    resources = ["*"]
+
+    actions = [
+      "secretsmanager:Describe*",
+      "secretsmanager:Get*",
+      "secretsmanager:List*",
+    ]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceTag/access-team"
+      values   = ["$${aws:PrincipalTag/access-team}"]
+    }
+  }
+
+  statement {
+    sid       = "DenyUntagSecretsManagerReservedTags"
+    effect    = "Deny"
+    resources = ["*"]
+    actions   = ["secretsmanager:UntagResource"]
+
+    condition {
+      test     = "ForAnyValue:StringLike"
+      variable = "aws:TagKeys"
+      values   = ["access-*"]
+    }
+  }
+
+  statement {
+    sid       = "DenyPermissionsManagement"
+    effect    = "Deny"
+    resources = ["*"]
+    actions   = ["secretsmanager:*Policy"]
+  }
+}
+
+/***************************************************************
+  SECTION 3: Creating roles
+
+****************************************************************/
+
+resource "aws_iam_role" "access_peg_eng" {
+  name               = "access-peg-engineering"
+  assume_role_policy = data.aws_iam_policy_document.access_same_project_team.json
+
+  tags = {
+    access-project = local.peg_project
+    access-team    = local.eng_team
+    cost-center    = local.peg_cc
+  }
+}
+
+resource "aws_iam_role" "access_peg_qas" {
+  name               = "access-peg-quality-assurance"
+  assume_role_policy = data.aws_iam_policy_document.access_same_project_team.json
+
+  tags = {
+    access-project = local.peg_project
+    access-team    = local.qas_team
+    cost-center    = local.peg_cc
+  }
+}
+
+resource "aws_iam_role" "access_uni_eng" {
+  name               = "access-uni-engineering"
+  assume_role_policy = data.aws_iam_policy_document.access_same_project_team.json
+
+  tags = {
+    access-project = local.uni_project
+    access-team    = local.eng_team
+    cost-center    = local.uni_cc
+  }
+}
+
+resource "aws_iam_role" "access_uni_qas" {
+  name               = "access-uni-quality-assurance"
+  assume_role_policy = data.aws_iam_policy_document.access_same_project_team.json
+
+  tags = {
+    access-project = local.uni_project
+    access-team    = local.qas_team
+    cost-center    = local.uni_cc
+  }
+}
+
+/***************************************************************
+  SECTION 4: Creating resources
+
+  The attached permissions policy allows users to create
+  resources. This is allowed only if the resource is 
+  tagged with their project, team, and cost centre.
+
+****************************************************************/
