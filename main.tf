@@ -102,11 +102,14 @@ resource "aws_iam_user" "Arnav" {
   }
 }
 
+resource "aws_iam_user_login_profile" "Arnav" {
+  user = aws_iam_user.Arnav
+}
+
 resource "aws_iam_user_group_membership" "Arnav" {
   user   = aws_iam_user.Arnav.name
   groups = [aws_iam_group.this.name]
 }
-
 
 resource "aws_iam_user" "Mary" {
   name = "access-Mary-peg-qas"
@@ -117,6 +120,10 @@ resource "aws_iam_user" "Mary" {
     access-team    = local.qas_team
     cost-center    = local.peg_cc
   }
+}
+
+resource "aws_iam_user_login_profile" "Mary" {
+  user = aws_iam_user.Mary
 }
 
 resource "aws_iam_user_group_membership" "Mary" {
@@ -135,6 +142,10 @@ resource "aws_iam_user" "Saanvi" {
   }
 }
 
+resource "aws_iam_user_login_profile" "Saanvi" {
+  user = aws_iam_user.Saanvi
+}
+
 resource "aws_iam_user_group_membership" "Saanvi" {
   user   = aws_iam_user.Saanvi.name
   groups = [aws_iam_group.this.name]
@@ -149,6 +160,10 @@ resource "aws_iam_user" "Carlos" {
     access-team    = local.qas_team
     cost-center    = local.uni_cc
   }
+}
+
+resource "aws_iam_user_login_profile" "Carlos" {
+  user = aws_iam_user.Carlos
 }
 
 resource "aws_iam_user_group_membership" "Carlos" {
@@ -169,8 +184,8 @@ data "aws_iam_policy_document" "access_same_project_team" {
   statement {
     sid       = "AllActionsSecretsManagerSameProjectSameTeam"
     effect    = "Allow"
-    resources = ["*"]
     actions   = ["secretsmanager:*"]
+    resources = ["*"]
 
     condition {
       test     = "StringEquals"
@@ -237,7 +252,6 @@ data "aws_iam_policy_document" "access_same_project_team" {
     sid       = "ReadSecretsManagerSameTeam"
     effect    = "Allow"
     resources = ["*"]
-
     actions = [
       "secretsmanager:Describe*",
       "secretsmanager:Get*",
@@ -272,14 +286,33 @@ data "aws_iam_policy_document" "access_same_project_team" {
   }
 }
 
+resource "aws_iam_policy" "access_same_project_team" {
+  name   = "access_same_project_team"
+  policy = data.aws_iam_policy_document.access_same_project_team.json
+}
+
+
 /***************************************************************
   SECTION 3: Creating roles
 
 ****************************************************************/
 
 resource "aws_iam_role" "access_peg_eng" {
-  name               = "access-peg-engineering"
-  assume_role_policy = data.aws_iam_policy_document.access_same_project_team.json
+  name                = "access-peg-engineering"
+  managed_policy_arns = [aws_iam_policy.access_same_project_team.arn]
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          AWS = "${var.account_id}"
+        }
+      },
+    ]
+  })
 
   tags = {
     access-project = local.peg_project
@@ -289,8 +322,21 @@ resource "aws_iam_role" "access_peg_eng" {
 }
 
 resource "aws_iam_role" "access_peg_qas" {
-  name               = "access-peg-quality-assurance"
-  assume_role_policy = data.aws_iam_policy_document.access_same_project_team.json
+  name                = "access-peg-quality-assurance"
+  managed_policy_arns = [aws_iam_policy.access_same_project_team.arn]
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          AWS = "${var.account_id}"
+        }
+      },
+    ]
+  })
 
   tags = {
     access-project = local.peg_project
@@ -300,8 +346,21 @@ resource "aws_iam_role" "access_peg_qas" {
 }
 
 resource "aws_iam_role" "access_uni_eng" {
-  name               = "access-uni-engineering"
-  assume_role_policy = data.aws_iam_policy_document.access_same_project_team.json
+  name                = "access-uni-engineering"
+  managed_policy_arns = [aws_iam_policy.access_same_project_team.arn]
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          AWS = "${var.account_id}"
+        }
+      },
+    ]
+  })
 
   tags = {
     access-project = local.uni_project
@@ -311,8 +370,21 @@ resource "aws_iam_role" "access_uni_eng" {
 }
 
 resource "aws_iam_role" "access_uni_qas" {
-  name               = "access-uni-quality-assurance"
-  assume_role_policy = data.aws_iam_policy_document.access_same_project_team.json
+  name                = "access-uni-quality-assurance"
+  managed_policy_arns = [aws_iam_policy.access_same_project_team.arn]
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          AWS = "${var.account_id}"
+        }
+      },
+    ]
+  })
 
   tags = {
     access-project = local.uni_project
