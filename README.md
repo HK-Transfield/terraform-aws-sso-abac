@@ -117,7 +117,7 @@ statement {
 ```
 
 #### 2.1.5 Resource Permissions Management
-This statement **DENIES** access to create, edit, or delete resource-based policies. These policies could be used to change the permissions of the secret.
+This statement **DENIES** access to create, edit, or delete resource-based policies. These policies could be used to change the permissions of the resource.
 ```
 statement {
     sid       = "DenyPermissionsManagement"
