@@ -291,6 +291,117 @@ resource "aws_iam_policy" "access_same_project_team" {
   policy = data.aws_iam_policy_document.access_same_project_team.json
 }
 
+data "aws_iam_policy_document" "access_same_s3" {
+  statement {
+    sid       = "AllActionsS3SameProjectSameTeam"
+    effect    = "Allow"
+    actions   = ["s3:*"]
+    resources = ["*"]
+
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceTag/access-project"
+      values   = ["$${aws:PrincipalTag/access-project}"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceTag/access-team"
+      values   = ["$${aws:PrincipalTag/access-team}"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceTag/cost-center"
+      values   = ["$${aws:PrincipalTag/cost-center}"]
+    }
+
+    condition {
+      test     = "ForAllValues:StringEquals"
+      variable = "aws:TagKeys"
+
+      values = [
+        "access-project",
+        "access-team",
+        "cost-center",
+        "Name",
+        "OwnedBy",
+      ]
+    }
+
+    condition {
+      test     = "StringEqualsIfExists"
+      variable = "aws:RequestTag/access-project"
+      values   = ["$${aws:PrincipalTag/access-project}"]
+    }
+
+    condition {
+      test     = "StringEqualsIfExists"
+      variable = "aws:RequestTag/access-team"
+      values   = ["$${aws:PrincipalTag/access-team}"]
+    }
+
+    condition {
+      test     = "StringEqualsIfExists"
+      variable = "aws:RequestTag/cost-center"
+      values   = ["$${aws:PrincipalTag/cost-center}"]
+    }
+  }
+
+  statement {
+    sid       = "ListBucketsAndObjects"
+    effect    = "Allow"
+    resources = ["arn:aws:s3:::*"]
+
+    actions = [
+      "s3:ListAllMyBuckets",
+      "s3:ListObjects",
+    ]
+  }
+
+  statement {
+    sid       = "ReadObjectsSameTeam"
+    effect    = "Allow"
+    resources = ["arn:aws:s3:::*"]
+
+    actions = [
+      "s3:GetObject",
+      "s3:GetObjectTagging",
+    ]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceTag/access-team"
+      values   = ["$${aws:PrincipalTag/access-team}"]
+    }
+  }
+
+  statement {
+    sid       = "DenyUntagS3ReservedTags"
+    effect    = "Deny"
+    resources = ["arn:aws:s3:::*"]
+    actions   = ["s3:DeleteObjectTagging"]
+
+    condition {
+      test     = "ForAnyValue:StringLike"
+      variable = "aws:TagKeys"
+      values   = ["access-*"]
+    }
+  }
+
+  statement {
+    sid       = "DenyBucketPolicyChanges"
+    effect    = "Deny"
+    resources = ["arn:aws:s3:::*"]
+    actions   = ["s3:PutBucketPolicy"]
+  }
+}
+
+resource "aws_iam_policy" "access_same_s3" {
+  name   = "access_same_s3"
+  policy = data.aws_iam_policy_document.access_same_s3.json
+}
 
 /***************************************************************
   SECTION 3: Creating roles
@@ -299,7 +410,7 @@ resource "aws_iam_policy" "access_same_project_team" {
 
 resource "aws_iam_role" "access_peg_eng" {
   name                = "access-peg-engineering"
-  managed_policy_arns = [aws_iam_policy.access_same_project_team.arn]
+  managed_policy_arns = [aws_iam_policy.access_same_project_team.arn, aws_iam_policy.access_same_s3.arn]
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
