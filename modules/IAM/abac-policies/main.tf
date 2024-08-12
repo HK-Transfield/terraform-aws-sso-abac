@@ -1,6 +1,6 @@
 data "aws_iam_policy_document" "abac" {
 
-  /* Allow all of a service's actions on all related resources if the resource tags match the principal tags.*/
+  /* 1. ALLOW all of a service's actions on all related resources if the resource tags match the principal tags.*/
   statement {
     sid       = "AllActions<AWS_SERVICE>SameTags"
     effect    = "Allow"
@@ -10,7 +10,7 @@ data "aws_iam_policy_document" "abac" {
     # Add a condition block for every tag you assign a resource
     condition {
       test     = "StringEquals"
-      variable = "aws:ResourceTag/tag"
+      variable = "aws:ResourceTag/tag1"
       values   = ["$${aws:PrincipalTag/tag1}"]
     }
 
@@ -45,7 +45,7 @@ data "aws_iam_policy_document" "abac" {
     }
   }
 
-  /* Allow certain of a service's actions on all related resources if there are no resource tags. */
+  /* 2. ALLOW certain of a service's actions on all related resources if there are no resource tags. */
   statement {
     sid       = "AllResources<AWS_SERVICE>NoTags"
     effect    = "Allow"
@@ -53,7 +53,7 @@ data "aws_iam_policy_document" "abac" {
     actions   = ["<AWS_SERVICE>:<ACTION>"]
   }
 
-  # Allow read-only operations if the principal is tagged with the same access tag as the resource.
+  /* 3. ALLOW read-only operations if the principal is tagged with the same access tag as the resource. */
   statement {
     sid       = "Read<AWS_SERVICE>SameTag"
     effect    = "Allow"
@@ -67,7 +67,7 @@ data "aws_iam_policy_document" "abac" {
     }
   }
 
-  # Deny requests to move tags with keys beginning with a certain string. These tags control resouce access; therefore, removing tags removes permissions.
+  /* 4. DENY requests to move tags with keys beginning with a certain string. These tags control resouce access; therefore, removing tags removes permissions. */
   statement {
     sid       = "DenyUntag<AWS_SERVICE>ReservedTags"
     effect    = "Deny"
@@ -80,7 +80,7 @@ data "aws_iam_policy_document" "abac" {
       values   = ["<SOME_STRING>*"]
     }
   }
-  # Deny access to create, edit, or delete resource-based policies. These policies could be used to change the permissions of the secret.
+  /* 5. DENY access to create, edit, or delete resource-based policies. These policies could be used to change the permissions of the resource. */
   statement {
     sid       = "DenyPermissionsManagement"
     effect    = "Deny"

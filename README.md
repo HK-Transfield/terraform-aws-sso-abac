@@ -1,19 +1,19 @@
 # AWS IAM Identity Center Sync and ABAC
 
-## Overview
+## 1.0 Overview
 Attribute-based access control (ABAC) is an authorization strategy that defines permissions based
 on attributes or *tags*. Tags can be attached to IAM users or roles, and to AWS resources. You can
 define policies using tag condition keys to grant permissions to your principals based on their tags.
 
 
-## Project Template outline
+## 2.0 Project Outline
 A user should be able to create a new project that:
 * Contains all permission sets for a project
-* Define individual permission sets as inline policies
-* Either replicate or define customer policies
+* Defines individual permission sets as inline policies
+* Replicates or defines customer policies
 * Include a variable for a tag that will only allows access to resources with same tag
 
-## ABAC Policies
+### 2.1 ABAC Policies
 > **IMPORTANT**
 > Policies using the following strategy allow *all* actions for a service, but explicitly deny 
 > permissions-altering actions. Denying actions overrides any other policies allowing the principal 
@@ -21,19 +21,12 @@ A user should be able to create a new project that:
 > denies only when there is no circumstance that should allow that action. Otherwise, allow a list 
 > of individual actions, and the unwanted actions are denied by default. 
 
-Policies that allow for ABAC based on permissions should allow principals to create, edit, and delete resources with values that match the principal's tags. These Policies can be divided into multiple statements:
-1. ***Allow*** all of a service's actions on all related resources if the resource tags match the principal tags.
-2. ***Allow*** certain of a service's actions on all related resources if there are no resource tags.
-3. ***Allow*** read-only operations if the principal is tagged with the same access tag as the resource.
-4. ***Deny*** requests to move tags with keys beginning with a certain string. These tags control resouce access; therefore, removing tags removes permissions.
-5. ***Deny*** access to create, edit, or delete resource-based policies. These policies could be used to change the permissions of the secret.
+Policies that allow for ABAC based on permissions should allow principals to create, edit, and delete resources with values that match the principal's tags. These Policies can be divided into multiple statements.
 
-The following Terraform code shows the template of an ABAC policy:
+#### 2.1.1 Matching Principal and Resource Tags
+This statement **ALLOWS** all of a service's actions on all related resources if the resource tags match the principal tags.
 ```
-data "aws_iam_policy_document" "abac" {
-
-  /* Allow all of a service's actions on all related resources if the resource tags match the principal tags.*/
-  statement {
+statement {
     sid       = "AllActions<AWS_SERVICE>SameTags"
     effect    = "Allow"
     actions   = ["<AWS_SERVICE>:*"]
@@ -42,7 +35,7 @@ data "aws_iam_policy_document" "abac" {
     # Add a condition block for every tag you assign a resource
     condition {
       test     = "StringEquals"
-      variable = "aws:ResourceTag/tag"
+      variable = "aws:ResourceTag/tag1"
       values   = ["$${aws:PrincipalTag/tag1}"]
     }
 
@@ -76,17 +69,23 @@ data "aws_iam_policy_document" "abac" {
       values   = ["$${aws:PrincipalTag/tag2}"]
     }
   }
+```
 
-  /* Allow certain of a service's actions on all related resources if there are no resource tags. */
-  statement {
+#### 2.1.2 No Resource Tags
+This statement **ALLOWS** certain of a service's actions on all related resources if there are no resource tags.
+```
+statement {
     sid       = "AllResources<AWS_SERVICE>NoTags"
     effect    = "Allow"
     resources = ["*"]
     actions   = ["<AWS_SERVICE>:<ACTION>"]
   }
+```
 
-  # Allow read-only operations if the principal is tagged with the same access tag as the resource.
-  statement {
+#### 2.1.3 Matching a Principal tag
+This statement **ALLOWS** read-only operations if the principal is tagged with the same access tag as the resource.
+```
+statement {
     sid       = "Read<AWS_SERVICE>SameTag"
     effect    = "Allow"
     resources = ["*"]
@@ -98,9 +97,12 @@ data "aws_iam_policy_document" "abac" {
       values   = ["$${aws:PrincipalTag/tag1}"]
     }
   }
+```
 
-  # Deny requests to move tags with keys beginning with a certain string. These tags control resouce access; therefore, removing tags removes permissions.
-  statement {
+#### 2.1.4 Requests to Remove Tags
+This statement **DENIES** requests to remove tags with keys beginning with a certain string. These tags control resouce access; therefore, removing tags removes permissions.
+```
+statement {
     sid       = "DenyUntag<AWS_SERVICE>ReservedTags"
     effect    = "Deny"
     resources = ["*"]
@@ -112,17 +114,20 @@ data "aws_iam_policy_document" "abac" {
       values   = ["<SOME_STRING>*"]
     }
   }
-  # Deny access to create, edit, or delete resource-based policies. These policies could be used to change the permissions of the secret.
-  statement {
+```
+
+#### 2.1.5 Resource Permissions Management
+This statement **DENIES** access to create, edit, or delete resource-based policies. These policies could be used to change the permissions of the secret.
+```
+statement {
     sid       = "DenyPermissionsManagement"
     effect    = "Deny"
     resources = ["*"]
     actions   = ["<AWS_SERVICE>:*Policy"]
   }
-}
 ```
 
-## Considerations
+## 3.0 Considerations
 * Customise inline policies to attach to users or groups and filter through them.
 * Implement ABAC in other services and resources:
     * Resources like EC2 instances. Could potentially try an S3 bucket again.
@@ -158,6 +163,10 @@ applied whenever a new SSO instance is given.
 - [IAM JSON policy elements: Condition](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition.html)
 
 - [AWS global condition context keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html#condition-keys-principaltag)
+
+- [Determining whether a request is allowed or denied within an account](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html#policy-eval-denyallow)
+
+- [Define permissions based on attributes with ABAC authorization](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction_attribute-based-access-control.html)
 
 ### AWS Knowledge Center
 - [How do I use the PrincipalTag, ResourceTag, RequestTag, and TagKeys condition keys to create an IAM policy for tag-based restriction?](https://repost.aws/knowledge-center/iam-tag-based-restriction-policies)
