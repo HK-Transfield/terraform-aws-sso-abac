@@ -103,7 +103,7 @@ resource "aws_iam_user" "Arnav" {
 }
 
 resource "aws_iam_user_login_profile" "Arnav" {
-  user = aws_iam_user.Arnav
+  user = aws_iam_user.Arnav.name
 }
 
 resource "aws_iam_user_group_membership" "Arnav" {
@@ -123,7 +123,7 @@ resource "aws_iam_user" "Mary" {
 }
 
 resource "aws_iam_user_login_profile" "Mary" {
-  user = aws_iam_user.Mary
+  user = aws_iam_user.Mary.name
 }
 
 resource "aws_iam_user_group_membership" "Mary" {
@@ -143,7 +143,7 @@ resource "aws_iam_user" "Saanvi" {
 }
 
 resource "aws_iam_user_login_profile" "Saanvi" {
-  user = aws_iam_user.Saanvi
+  user = aws_iam_user.Saanvi.name
 }
 
 resource "aws_iam_user_group_membership" "Saanvi" {
@@ -163,7 +163,7 @@ resource "aws_iam_user" "Carlos" {
 }
 
 resource "aws_iam_user_login_profile" "Carlos" {
-  user = aws_iam_user.Carlos
+  user = aws_iam_user.Carlos.name
 }
 
 resource "aws_iam_user_group_membership" "Carlos" {
