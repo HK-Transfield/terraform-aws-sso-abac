@@ -356,7 +356,7 @@ data "aws_iam_policy_document" "access_same_s3" {
 
     actions = [
       "s3:ListAllMyBuckets",
-      "s3:ListObjects",
+      "s3:ListBucket",
     ]
   }
 
