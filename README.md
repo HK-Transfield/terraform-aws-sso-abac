@@ -168,5 +168,14 @@ applied whenever a new SSO instance is given.
 
 - [Define permissions based on attributes with ABAC authorization](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction_attribute-based-access-control.html)
 
+- [AWS global condition context keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html)
+
+- [AWS services that work with IAM](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_aws-services-that-work-with-iam.html)
+
+- [Checklist: Configuring ABAC in AWS using IAM Identity Center](https://docs.aws.amazon.com/singlesignon/latest/userguide/abac-checklist.html)
+
 ### AWS Knowledge Center
 - [How do I use the PrincipalTag, ResourceTag, RequestTag, and TagKeys condition keys to create an IAM policy for tag-based restriction?](https://repost.aws/knowledge-center/iam-tag-based-restriction-policies)
+
+### Other websites
+- [The state of ABAC on AWS (in 2024)](https://ramimac.me/abac)
