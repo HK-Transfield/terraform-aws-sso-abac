@@ -9,6 +9,10 @@ variable "inline_policy_desc" {
   default     = ""
 }
 
+variable "policy_json" {
+  type = string
+}
+
 variable "project_tag_value" {
   description = "Tag value to filter on must match verbatim"
   type        = string

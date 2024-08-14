@@ -33,7 +33,7 @@ resource "aws_ssoadmin_permission_set" "this" {
 resource "aws_ssoadmin_permission_set_inline_policy" "this" {
   instance_arn       = tolist(data.aws_ssoadmin_instances.this.arns)[0]
   permission_set_arn = aws_ssoadmin_permission_set.this.arn
-  inline_policy      = data.aws_iam_policy_document.this.json
+  inline_policy      = var.policy_json
 }
 
 data "aws_ssoadmin_permission_set" "this" {
@@ -41,32 +41,3 @@ data "aws_ssoadmin_permission_set" "this" {
   name         = var.inline_policy_name
   depends_on   = [aws_ssoadmin_permission_set.this]
 }
-
-data "aws_iam_policy_document" "this" {
-
-  # Filter resource permissions based on tag
-  statement {
-    effect    = "Allow"
-    resources = ["*"]
-    actions   = var.conditional_actions
-
-    #? Code doesn't work with this condition, only when you remove it
-    #? It should filter to only allow access based on a tag on the resource
-    #? Possible causes:
-    #?    - Allows have to be specific, no '*'
-    #?    - May be impossible as you have a resource that cannot be tagged
-    condition {
-      test     = "StringEquals"
-      variable = "aws:ResourceTag/${var.project_tag_key}"
-      values   = [var.project_tag_value]
-    }
-  }
-
-  # permissions regardless of tag
-  statement {
-    effect    = "Allow"
-    resources = ["*"]
-    actions   = var.nonconditional_actions
-  }
-}
-
