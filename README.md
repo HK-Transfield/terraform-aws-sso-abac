@@ -174,6 +174,8 @@ applied whenever a new SSO instance is given.
 
 - [Checklist: Configuring ABAC in AWS using IAM Identity Center](https://docs.aws.amazon.com/singlesignon/latest/userguide/abac-checklist.html)
 
+- [Enable and configure attributes for access control](https://docs.aws.amazon.com/singlesignon/latest/userguide/configure-abac.html)
+
 ### AWS Knowledge Center
 - [How do I use the PrincipalTag, ResourceTag, RequestTag, and TagKeys condition keys to create an IAM policy for tag-based restriction?](https://repost.aws/knowledge-center/iam-tag-based-restriction-policies)
 
