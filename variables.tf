@@ -7,18 +7,19 @@ variable "policy_name" {
   type        = string
 }
 
+variable "policy_json" {
+  description = "JSON policy document to attach to a user, group, or role"
+  type        = string
+}
+
 variable "policy_desc" {
   description = "A description for the inline policy"
   type        = string
   default     = ""
 }
 
-variable "policy_json" {
-  type = string
-}
-
 variable "session_duration" {
-  description = "Session Time out for SSO"
+  description = "Session Timeout for SSO"
   type        = string
   default     = "PT1H"
 }
@@ -27,31 +28,34 @@ variable "session_duration" {
 # IAM Identity Center
 ################################################################################
 
+variable "aws_account_identifier" {
+  description = "A 10-12 digit string used to identify an AWS account"
+  type        = string
+}
+
 variable "principal_type" {
-  description = "The entity type for which the assignment wil be created"
+  description = "The entity type for which the assignment will be created"
   type        = string
   default     = "GROUP" # Typically don't want to assign permissions to just users
 }
 
-variable "aws_account_identifier" {
-  description = "A 10-12 digit string that's used as an AWS account identifier"
-  type        = string
-}
-
-variable "aws_identitystore_groups" {
-  description = "Groups to assign the AWS account to"
-  type        = map(string)
-}
-
-variable "group" {
-  type = string
-}
+# variable "aws_identitystore_groups" {
+#   description = "Groups to assign the AWS account to"
+#   type        = map(string)
+# }
 
 ################################################################################
 # Attributes
 ################################################################################
 
-variable "tags" {
-  description = "Tags or arrtributes"
+variable "attributes" {
+  description = "A map of user attributes to use in policies to control access to resources"
   type        = map(string)
+  default     = {}
+}
+
+variable "tags" {
+  description = "Tags or attributes"
+  type        = map(string)
+  default     = {}
 }
