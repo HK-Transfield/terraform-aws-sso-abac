@@ -1,4 +1,18 @@
-# AWS IAM Identity Center Sync and ABAC
+# AWS IAM Identity Center ABAC Module
+
+## Usage
+```
+module "sso_abac" {
+  source                 = "./modules/aws-sso-abac-access"
+
+  policy_name            = "my-permission-set"
+  aws_account_identifier = var.account_id
+  
+  attributes             = ["CostCenter", "Organization", "Division"]
+  actions_no_tags        = ["ec2:DescribeInstances"]
+  actions_matching_tags  = ["ec2:StartInstances", "ec2:StopInstances"]
+}
+```
 
 ## Overview
 Attribute-based access control (ABAC) is an authorization strategy that defines permissions based
@@ -25,10 +39,9 @@ applied whenever a new SSO instance is given.
 > **NOTE**
 > When playing with IAM SSO and Terraform State. Always have an admin account 
 > assigned to the managedment account outside of Terraform state, in case you
-> make the mistake of removing all access.
->
-> If pushing a change altering or going near admin permission sets and the 
-> management account push  it from another user, or use a use/role with keys.
+> make the mistake of removing all access. If pushing a change altering or 
+> going near admin permission sets and the management account push it from 
+> another user, or use a use/role with keys.
 
 ## Requirements
 | Name | Version |
@@ -40,3 +53,18 @@ applied whenever a new SSO instance is given.
 | Name | Version |
 |------|---------|
 | [aws](https://github.com/terraform-aws-modules/terraform-aws-vpc/blob/master/README.md#requirement_aws) | 5.58.0 |
+
+## Modules
+No modules.
+
+## Resources
+| Name | Type |
+|------|---------|
+| [aws_ssoadmin_account_assignment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_account_assignment) | resource |
+| [aws_ssoadmin_instance_access_control_attributes](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_instance_access_control_attributes) | resource |
+| [aws_ssoadmin_permission_set](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_permission_set) | resource |
+| [aws_ssoadmin_permission_set_inline_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_permission_set_inline_policy) | resource |
+| [aws_iam_policy_document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_identitystore_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/identitystore_group) | data source |
+| [aws_ssoadmin_instances](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssoadmin_instances) | data source |
+| [aws_ssoadmin_permission_set](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssoadmin_permission_set) | data source |
