@@ -202,7 +202,7 @@ The following list is taken [here](https://docs.aws.amazon.com/IAM/latest/UserGu
 |Amazon Redshift|	Yes|
 |Amazon Redshift Serverless|	Yes|
 |Amazon Rekognition|	Yes|
-|Amazon Relational Database Service (Amazon RDS) (Info)|	Yes|
+|Amazon Relational Database Service (Amazon RDS)|	Yes|
 |AWS re:Post Private|	Yes|
 |AWS Resilience Hub|	Yes|
 |AWS Resource Access Manager (AWS RAM)|	Yes|
@@ -264,19 +264,27 @@ The following list is taken [here](https://docs.aws.amazon.com/IAM/latest/UserGu
 |AWS Amplify|	Partial|
 |Amazon CloudFront|	Partial|
 |Amazon CloudWatch Logs|	Partial|
-|AWS CodeBuild|	Partial (Info)|
+|AWS CodeBuild|	Partial<sup>1</sup>|
 |AWS Data Pipeline|	Partial|
 |Amazon Elastic File System (Amazon EFS)|	Partial|
 |AWS Elastic Load Balancing|	Partial|
 |AWS Glue|	Partial|
 |AWS IAM Identity Center|	Partial|
-|AWS Identity and Access Management (IAM)|	Partial (Info)|
+|AWS Identity and Access Management (IAM)|	Partial<sup>2</sup>|
 |AWS IoT Greengrass V2|	Partial|
-|AWS Lambda|	Partial (Info)|
-|Amazon Lightsail|	Partial (Info)|
+|AWS Lambda|	Partial<sup>3</sup>|
+|Amazon Lightsail|	Partial<sup>4</sup>|
 |Amazon Simple Queue Service (Amazon SQS)|	Partial|
-|Amazon Simple Storage Service (Amazon S3)|	Partial (Info)|
-|AWS X-Ray|	Partial (Info)|
+|Amazon Simple Storage Service (Amazon S3)|	Partial<sup>5</sup>|
+|AWS X-Ray|	Partial<sup>6</sup>|
+
+1. AWS CodeBuild supports ABAC for project-based actions.
+2. IAM supports tag-based access control for most IAM resources.
+3. Lambda supports attribute-based access control (ABAC) for API actions that use a Lambda function as the required resource. Layers, event source mappings, and code signing config resources are not supported.
+4. Lightsail partially supports resource-level permissions and ABAC.
+5. Amazon S3 supports tag-based authorization for only object resources.
+6. X-Ray supports tag-based access control for groups and sampling rules.
+
 
 ## 2.3 Services that DO NOT work with ABAC
 | Service | ABAC Compatible |
