@@ -1,7 +1,7 @@
 # AWS IAM Identity Center ABAC Module
 
 ## Usage
-```
+```hcl
 module "sso_abac" {
   source                 = "./modules/aws-sso-abac-access"
 
