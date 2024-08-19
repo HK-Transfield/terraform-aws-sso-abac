@@ -17,25 +17,51 @@ locals {
 # Attributes for Access Control
 ################################################################################
 
-# resource "aws_ssoadmin_instance_access_control_attributes" "example" {
-#   instance_arn = local.sso_instance_arn
-#   attribute {
-#     key = "CotCenter"
-#     value {
-#       source = ["$${path:enterprise.cotCenter}"]
-#     }
-#   }
-#   attribute {
-#     key = "Oganization"
-#     value {
-#       source = ["$${path:enterprise.oganization}"]
-#     }
-#   }
-# }
+resource "aws_ssoadmin_instance_access_control_attributes" "example" {
+  instance_arn = local.sso_instance_arn
+  attribute {
+    key = "test1"
+    value {
+      source = ["$${path:enterprise.costCenter}"]
+    }
+  }
+  attribute {
+    key = "test2"
+    value {
+      source = ["$${path:enterprise.organization}"]
+    }
+  }
+}
 
 ################################################################################
-# Policies and Permission Sets
+# IAM Policies and SSO Permission Sets
 ################################################################################
+
+data "aws_iam_policy_document" "this" {
+  # Actions allowed regardless of tags
+  statement {
+    effect    = "Allow"
+    actions   = var.actions_no_tags
+    resources = ["*"]
+  }
+
+  # Actions allowed when tags match
+  statement {
+    effect    = "Allow"
+    actions   = var.actions_matching_tags
+    resources = ["*"]
+
+    dynamic "condition" {
+      for_each = var.attributes
+
+      content {
+        test     = "StringEquals"
+        variable = "aws:ResourceTag/${condition.value}"
+        values   = ["$${aws:PrincipalTag/${condition.value}}"]
+      }
+    }
+  }
+}
 
 data "aws_ssoadmin_permission_set" "this" {
   instance_arn = local.sso_instance_arn
@@ -48,13 +74,12 @@ resource "aws_ssoadmin_permission_set" "this" {
   description      = var.policy_desc != "" ? var.policy_desc : var.policy_name
   instance_arn     = local.sso_instance_arn
   session_duration = var.session_duration
-  tags             = var.tags
 }
 
 resource "aws_ssoadmin_permission_set_inline_policy" "this" {
   instance_arn       = local.sso_instance_arn
   permission_set_arn = aws_ssoadmin_permission_set.this.arn
-  inline_policy      = var.policy_json
+  inline_policy      = data.aws_iam_policy_document.this.json
 }
 
 ################################################################################

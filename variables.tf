@@ -1,14 +1,9 @@
 ################################################################################
-# Policies and Permission Sets
+# IAM Policies and SSO Permission Sets
 ################################################################################
 
 variable "policy_name" {
   description = "The name of the inline policy created for a single IAM identity"
-  type        = string
-}
-
-variable "policy_json" {
-  description = "JSON policy document to attach to a user, group, or role"
   type        = string
 }
 
@@ -39,23 +34,26 @@ variable "principal_type" {
   default     = "GROUP" # Typically don't want to assign permissions to just users
 }
 
-# variable "aws_identitystore_groups" {
-#   description = "Groups to assign the AWS account to"
-#   type        = map(string)
-# }
+################################################################################
+# IAM Policy Actions
+################################################################################
+
+variable "actions_no_tags" {
+  description = "Actions allowed on a resource, regardless of what tags the principal has"
+  type        = list(string)
+}
+
+variable "actions_matching_tags" {
+  description = "Actions allowed on a resource when the principal tags match the resource"
+  type        = list(string)
+}
 
 ################################################################################
-# Attributes
+# Attributes for Access Control
 ################################################################################
 
 variable "attributes" {
-  description = "A map of user attributes to use in policies to control access to resources"
-  type        = map(string)
-  default     = {}
-}
-
-variable "tags" {
-  description = "Tags or attributes"
-  type        = map(string)
-  default     = {}
+  description = "A list of user attributes to use in policies to control access to resources"
+  type        = list(string)
+  default     = []
 }
