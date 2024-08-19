@@ -25,6 +25,13 @@ A user should be able to create a new project that:
 * Replicates or defines customer policies
 * Include a variable for a tag that will only allows access to resources with same tag
 
+## Knowledge Base
+# Knowledge Base
+* [1.0 ABAC Policy Structure](./docs/1-abac-policies.md)
+* [2.0 Services compatible with ABAC](./docs/2-abac-compatible-services.md)
+* [3.0 Attribute Mappings](./docs/3-attribute-mappings.md)
+* [4.0 References](./docs/4-references.md)
+
 ## Considerations
 * Customise inline policies to attach to users or groups and filter through them.
 * Implement ABAC in other services and resources:
