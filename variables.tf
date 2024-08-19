@@ -23,7 +23,7 @@ variable "session_duration" {
 # IAM Identity Center
 ################################################################################
 
-variable "aws_account_identifier" {
+variable "account_identifiers" {
   description = "A 10-12 digit string used to identify an AWS account"
   type        = string
 }
@@ -38,12 +38,12 @@ variable "principal_type" {
 # IAM Policy Actions
 ################################################################################
 
-variable "actions_no_tags" {
+variable "actions_allowed_no_tags" {
   description = "Actions allowed on a resource, regardless of what tags the principal has"
   type        = list(string)
 }
 
-variable "actions_matching_tags" {
+variable "actions_allowed_matching_tags" {
   description = "Actions allowed on a resource when the principal tags match the resource"
   type        = list(string)
 }

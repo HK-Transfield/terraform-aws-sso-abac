@@ -41,14 +41,14 @@ data "aws_iam_policy_document" "this" {
   # Actions allowed regardless of tags
   statement {
     effect    = "Allow"
-    actions   = var.actions_no_tags
+    actions   = var.actions_allowed_no_tags
     resources = ["*"]
   }
 
   # Actions allowed when tags match
   statement {
     effect    = "Allow"
-    actions   = var.actions_matching_tags
+    actions   = var.actions_allowed_matching_tags
     resources = ["*"]
 
     dynamic "condition" {
@@ -102,7 +102,7 @@ resource "aws_ssoadmin_account_assignment" "this" {
   permission_set_arn = data.aws_ssoadmin_permission_set.this.arn
   instance_arn       = local.sso_instance_arn
   principal_type     = var.principal_type
-  target_id          = var.aws_account_identifier
+  target_id          = var.account_identifiers
   target_type        = "AWS_ACCOUNT" # Keep entity type for which the assignment will be created as is
 }
 
