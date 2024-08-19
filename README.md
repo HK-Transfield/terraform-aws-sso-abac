@@ -147,9 +147,9 @@ applied whenever a new SSO instance is given.
 > management account push  it from another user, or use a use/role with keys.
 
 ## 4.0 Resources/Services that allow for ABAC
-| BRUH | Version |
+| Resource/Service | ABAC Access |
 |------|---------|
-|hello | asdasd |
+| |  |
 
 ## 5.0 Requirements
 | Name | Version |
