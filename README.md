@@ -147,11 +147,9 @@ applied whenever a new SSO instance is given.
 > management account push  it from another user, or use a use/role with keys.
 
 ## 4.0 Resources/Services that allow for ABAC
-<div style="height: 200px; overflow-y: auto;">
-| Name | Version |
+| BRUH | Version |
 |------|---------|
-|  test|    t es |
-</div>
+|hello | asdasd |
 
 ## 5.0 Requirements
 | Name | Version |
