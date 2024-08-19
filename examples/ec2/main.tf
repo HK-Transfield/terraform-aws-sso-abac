@@ -17,7 +17,7 @@ locals {
   actions_matching_tags = ["ec2:StartInstances", "ec2:StopInstances"]
 }
 
-module "sso_abac" {
+module "ec2_abac" {
   source                 = "../.."
   policy_name            = "Tempest-Engineers"
   aws_account_identifier = var.account_id
