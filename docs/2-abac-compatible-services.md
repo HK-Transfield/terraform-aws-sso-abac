@@ -270,20 +270,20 @@ The following list is taken [here](https://docs.aws.amazon.com/IAM/latest/UserGu
 |AWS Elastic Load Balancing|
 |AWS Glue|
 |AWS IAM Identity Center|
-|AWS Identity and Access Management (IAM)<sup>2</sup>|
+|AWS Identity and Access Management (IAM)<sup>[2](#partial2)</sup>|
 |AWS IoT Greengrass V2|
-|AWS Lambda<sup>3</sup>|
-|Amazon Lightsail<sup>4</sup>|
+|AWS Lambda<sup>[3](#partial3)</sup>|
+|Amazon Lightsail<sup>[4](#partial4)</sup>|
 |Amazon Simple Queue Service (Amazon SQS)|
-|Amazon Simple Storage Service (Amazon S3)<sup>5</sup>|
-|AWS X-Ray<sup>6</sup>|
+|Amazon Simple Storage Service (Amazon S3)<sup>[5](#partial5)</sup>|
+|AWS X-Ray<sup>[6](#partial6)</sup>|
 
-<a name="partial1">1.</a> AWS CodeBuild supports ABAC for project-based actions.
-<a name="partial2">2.</a>IAM supports tag-based access control for most IAM resources.
-<a name="partial3">3.</a> Lambda supports attribute-based access control (ABAC) for API actions that use a Lambda function as the required resource. Layers, event source mappings, and code signing config resources are not supported.
-<a name="partial4">4.</a> Lightsail partially supports resource-level permissions and ABAC.
-<a name="partial5">5.</a> Amazon S3 supports tag-based authorization for only object resources.
-<a name="partial6">6.</a> X-Ray supports tag-based access control for groups and sampling rules.
+<div name="partial1">1. AWS CodeBuild supports ABAC for project-based actions.</div>
+<div name="partial2">2.IAM supports tag-based access control for most IAM resources.</div>
+<div name="partial3">3. Lambda supports attribute-based access control (ABAC) for API actions that use a Lambda function as the required resource. Layers, event source mappings, and code signing config resources are not supported.</div>
+<div name="partial4">4. Lightsail partially supports resource-level permissions and ABAC.</div>
+<div name="partial5">5. Amazon S3 supports tag-based authorization for only object resources.</div>
+<div name="partial6">6. X-Ray supports tag-based access control for groups and sampling rules.</div>
 
 
 ## 2.3 Services that <ins>DO NOT</ins> work with ABAC
