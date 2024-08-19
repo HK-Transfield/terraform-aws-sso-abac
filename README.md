@@ -1,5 +1,5 @@
 # AWS IAM Identity Center ABAC Module
-<div style="overflow-y: scroll; height: 200px; border: 1px solid #ddd; padding: 5px;">
+<div style="overflow-y: scroll; height: 20px; border: 1px solid #ddd; padding: 5px;">
 
 | Service/Resource | ABAC Access |
 |------------------|-------------|
