@@ -43,7 +43,7 @@ applied whenever a new SSO instance is given.
 > going near admin permission sets and the management account push it from 
 > another user, or use a use/role with keys.
 
-## Resources/Services ABAC access
+## Resources/Services and their ABAC access
 <div style="overflow-y: scroll; height: 20px; border: 1px solid #ddd; padding: 5px;">
 
 | Service/Resource | ABAC Access |
