@@ -1,4 +1,7 @@
 # 2.0 ABAC Compatible Services
+
+The following list is taken [here](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_aws-services-that-work-with-iam.html) from the official AWS IAM User Guide for AWS services that work with IAM.
+
 ## 2.1 Services that work with ABAC
 | Service | ABAC Compatible |
 |------------------|-------------|
