@@ -26,7 +26,6 @@ A user should be able to create a new project that:
 * Include a variable for a tag that will only allows access to resources with same tag
 
 ## Knowledge Base
-# Knowledge Base
 * [1.0 ABAC Policy Structure](./docs/1-abac-policies.md)
 * [2.0 Services compatible with ABAC](./docs/2-abac-compatible-services.md)
 * [3.0 Attribute Mappings](./docs/3-attribute-mappings.md)
