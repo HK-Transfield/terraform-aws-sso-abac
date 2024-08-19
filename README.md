@@ -6,7 +6,7 @@ module "sso_abac" {
   source                 = "./modules/aws-sso-abac-access"
 
   policy_name            = "my-permission-set"
-  aws_account_identifier = var.account_id
+  aws_account_identifier = "123456789012" # change to your account number
   
   attributes             = ["CostCenter", "Organization", "Division"]
   actions_no_tags        = ["ec2:DescribeInstances"]
