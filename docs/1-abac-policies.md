@@ -10,7 +10,7 @@ Policies that allow for ABAC based on permissions should allow principals to cre
 
 ## 1.1 Matching Principal and Resource Tags
 This statement **ALLOWS** all of a service's actions on all related resources if the resource tags match the principal tags.
-```
+```hcl
 statement {
     sid       = "AllActions<AWS_SERVICE>SameTags"
     effect    = "Allow"
@@ -58,7 +58,7 @@ statement {
 
 ## 1.2 No Resource Tags
 This statement **ALLOWS** certain of a service's actions on all related resources if there are no resource tags.
-```
+```hcl
 statement {
     sid       = "AllResources<AWS_SERVICE>NoTags"
     effect    = "Allow"
@@ -69,7 +69,7 @@ statement {
 
 ## 1.3 Matching a Principal tag
 This statement **ALLOWS** read-only operations if the principal is tagged with the same access tag as the resource.
-```
+```hcl
 statement {
     sid       = "Read<AWS_SERVICE>SameTag"
     effect    = "Allow"
@@ -86,7 +86,7 @@ statement {
 
 ## 1.4 Requests to Remove Tags
 This statement **DENIES** requests to remove tags with keys beginning with a certain string. These tags control resouce access; therefore, removing tags removes permissions.
-```
+```hcl
 statement {
     sid       = "DenyUntag<AWS_SERVICE>ReservedTags"
     effect    = "Deny"
@@ -103,7 +103,7 @@ statement {
 
 ## 1.5 Resource Permissions Management
 This statement **DENIES** access to create, edit, or delete resource-based policies. These policies could be used to change the permissions of the resource.
-```
+```hcl
 statement {
     sid       = "DenyPermissionsManagement"
     effect    = "Deny"
