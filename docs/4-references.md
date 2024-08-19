@@ -1,11 +1,11 @@
-# 3.0 References and Links
+# 4.0 References and Links
 
-## 3.1 Terraform Registry
+## 4.1 Terraform Registry
 - [Data Source: aws_iam_policy_document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document)
 
 - [Resource: aws_ssoadmin_instance_access_control_attributes](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_instance_access_control_attributes)
 
-## 3.2 AWS User Guides & Tutorials
+## 4.2 AWS User Guides & Tutorials
 - [IAM tutorial: Define permissions to access AWS resources based on tags](https://docs.aws.amazon.com/IAM/latest/UserGuide/tutorial_attribute-based-access-control.html)
 
 - [Permission sets](https://docs.aws.amazon.com/singlesignon/latest/userguide/permissionsetsconcept.html)
@@ -34,8 +34,8 @@
 
 - [Create permission policies for ABAC in IAM Identity Center](https://docs.aws.amazon.com/singlesignon/latest/userguide/configure-abac-policies.html)
 
-## 3.3 AWS Knowledge Center
+## 4.3 AWS Knowledge Center
 - [How do I use the PrincipalTag, ResourceTag, RequestTag, and TagKeys condition keys to create an IAM policy for tag-based restriction?](https://repost.aws/knowledge-center/iam-tag-based-restriction-policies)
 
-## 3.4 Other websites
+## 4.4 Other websites
 - [The state of ABAC on AWS (in 2024)](https://ramimac.me/abac)
