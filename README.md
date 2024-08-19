@@ -47,7 +47,7 @@ applied whenever a new SSO instance is given.
 
 | Service/Resource | ABAC Access |
 |------------------|-------------|
-| AWS Activate Console |	 | No | 
+| AWS Activate Console | No | 
 
 
 ## Requirements
