@@ -25,7 +25,7 @@ variable "session_duration" {
 
 variable "account_identifiers" {
   description = "A 10-12 digit string used to identify an AWS account"
-  type        = string
+  type        = list(string)
 }
 
 variable "principal_type" {
@@ -38,7 +38,7 @@ variable "principal_type" {
 # IAM Policy Actions
 ################################################################################
 
-variable "actions_allowed_no_tags" {
+variable "actions_allowed_nonconditional" {
   description = "Actions allowed on a resource, regardless of what tags the principal has"
   type        = list(string)
 }
@@ -54,6 +54,6 @@ variable "actions_allowed_matching_tags" {
 
 variable "attributes" {
   description = "A list of user attributes to use in policies to control access to resources"
-  type        = list(string)
-  default     = []
+  type        = map(string)
+  default     = {}
 }
