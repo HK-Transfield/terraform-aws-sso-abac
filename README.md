@@ -23,13 +23,13 @@ From the AWS IAM Identity Center User Guide ([link](https://docs.aws.amazon.com/
 > Using user attributes as tags in AWS helps you simplify the process of creating fine-grained permissions in 
 > AWS and ensures that your workforce gets access only to the AWS resources with matching tags.
 
-A user should be able to create a new project that:
-* Contains all permission sets for a project
+With this module, you should be able to create a new project that:
+* Contains all permission sets for a given project
 * Defines individual permission sets as inline policies
 * Replicates or defines customer policies
-* Include a variable for a tag that will only allows access to resources with same tag
+* Includes a variable for a tag/attribute that will only allows access to resources with same tag
 
-## Considerations
+<!-- ## Considerations
 * Customise inline policies to attach to users or groups and filter through them.
 * Implement ABAC in other services and resources:
     * Resources like EC2 instances. Could potentially try an S3 bucket again.
@@ -38,11 +38,11 @@ A user should be able to create a new project that:
 * Check if actions could be a wildcard or if you have to specify the actions.
 For example, could you use `[*]` instead of something like `ec2:ListInstances`.
 * Check if roles have to be given tags manually or if they can be automatically
-applied whenever a new SSO instance is given.
+applied whenever a new SSO instance is given. -->
 
-> **NOTE**
-> When playing with IAM SSO and Terraform State. Always have an admin account 
-> assigned to the managedment account outside of Terraform state, in case you
+> **NOTE:**
+> When working with IAM Identity Center and Terraform State, always have an admin account 
+> assigned to the management account outside of that Terraform State, in case you
 > make the mistake of removing all access. If pushing a change altering or 
 > going near admin permission sets and the management account push it from 
 > another user, or use a use/role with keys.
