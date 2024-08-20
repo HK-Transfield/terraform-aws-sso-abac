@@ -1,6 +1,5 @@
 ################################################################################
 # title: AWS IAM Identity Center with ABAC Access
-# contributors: HK Transfield
 #
 # This module helps with configuration tasks necessary to prepare AWS 
 # resources and to set up IAM Identity Center for ABAC access.
