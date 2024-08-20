@@ -14,6 +14,34 @@ module "sso_abac" {
 }
 ```
 
+## Prerequisites
+### Enabling and Configuring Attributes for Access Control in Terraform
+The following Terraform code will enable ABAC within the IAM Identity Center. You can adjust the attributes to suit your needs. If you wish to instead enable and configure attributes for access control using the IAM Identity Center console or IAM Identity Center API, you can follow this [guide](https://docs.aws.amazon.com/singlesignon/latest/userguide/configure-abac.html).
+
+```hcl
+locals {
+  attributes = {
+    "CostCenter"   = "$${path:enterprise.costCenter}"
+    "Organization" = "$${path:enterprise.organization}"
+    "Division"     = "$${path:enterprise.division}"
+  }
+}
+
+resource "aws_ssoadmin_instance_access_control_attributes" "this" {
+  instance_arn = tolist(data.aws_ssoadmin_instances.this.arns)[0]
+
+  dynamic "attribute" {
+    for_each = local.attributes
+    content {
+      key = attribute.key
+      value {
+        source = [attribute.value]
+      }
+    }
+  }
+}
+```
+
 ## Overview
 Attribute-based access control (ABAC) is an authorization strategy that defines permissions based
 on attributes or *tags*. Tags can be attached to IAM users or roles, and to AWS resources. You can
