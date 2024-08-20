@@ -14,26 +14,6 @@ locals {
 }
 
 ################################################################################
-# Attributes for Access Control
-################################################################################
-
-resource "aws_ssoadmin_instance_access_control_attributes" "example" {
-  instance_arn = local.sso_instance_arn
-  attribute {
-    key = "test1"
-    value {
-      source = ["$${path:enterprise.costCenter}"]
-    }
-  }
-  attribute {
-    key = "test2"
-    value {
-      source = ["$${path:enterprise.organization}"]
-    }
-  }
-}
-
-################################################################################
 # IAM Policies and SSO Permission Sets
 ################################################################################
 
@@ -41,7 +21,7 @@ data "aws_iam_policy_document" "this" {
   # Actions allowed regardless of tags
   statement {
     effect    = "Allow"
-    actions   = var.actions_allowed_no_tags
+    actions   = var.actions_allowed_nonconditional
     resources = ["*"]
   }
 
@@ -56,8 +36,8 @@ data "aws_iam_policy_document" "this" {
 
       content {
         test     = "StringEquals"
-        variable = "aws:ResourceTag/${condition.value}"
-        values   = ["$${aws:PrincipalTag/${condition.value}}"]
+        variable = "aws:ResourceTag/${condition.key}"
+        values   = ["$${aws:PrincipalTag/${condition.key}}"]
       }
     }
   }
@@ -98,11 +78,12 @@ data "aws_identitystore_group" "this" {
 }
 
 resource "aws_ssoadmin_account_assignment" "this" {
+  for_each           = toset(var.account_identifiers)
   principal_id       = data.aws_identitystore_group.this.id
   permission_set_arn = data.aws_ssoadmin_permission_set.this.arn
   instance_arn       = local.sso_instance_arn
   principal_type     = var.principal_type
-  target_id          = var.account_identifiers
+  target_id          = each.value
   target_type        = "AWS_ACCOUNT" # Keep entity type for which the assignment will be created as is
 }
 
