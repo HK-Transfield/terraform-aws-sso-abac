@@ -81,12 +81,6 @@ resource "aws_ssoadmin_instance_access_control_attributes" "this" {
 }
 ```
 
-## Knowledge Base
-* [1.0 ABAC Policy Structure](./docs/1-abac-policies.md)
-* [2.0 Services compatible with ABAC](./docs/2-abac-compatible-services.md)
-* [3.0 Attribute Mappings](./docs/3-attribute-mappings.md)
-* [4.0 References](./docs/4-references.md)
-
 ## Requirements
 | Name | Version |
 |------|---------|
