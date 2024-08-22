@@ -81,28 +81,57 @@ resource "aws_ssoadmin_instance_access_control_attributes" "this" {
 }
 ```
 
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
+
 | Name | Version |
 |------|---------|
-| [Terraform](https://github.com/terraform-aws-modules/terraform-aws-vpc/blob/master/README.md#requirement_terraform) | >= 1.0|
-| [aws](https://github.com/terraform-aws-modules/terraform-aws-vpc/blob/master/README.md#requirement_aws) | 5.58.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | 5.58.0 |
 
 ## Providers
+
 | Name | Version |
 |------|---------|
-| [aws](https://github.com/terraform-aws-modules/terraform-aws-vpc/blob/master/README.md#requirement_aws) | 5.58.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.58.0 |
 
 ## Modules
+
 No modules.
 
 ## Resources
+
 | Name | Type |
-|------|---------|
-| [aws_ssoadmin_account_assignment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_account_assignment) | resource |
-| [aws_ssoadmin_instance_access_control_attributes](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_instance_access_control_attributes) | resource |
-| [aws_ssoadmin_permission_set](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_permission_set) | resource |
-| [aws_ssoadmin_permission_set_inline_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_permission_set_inline_policy) | resource |
-| [aws_iam_policy_document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
-| [aws_identitystore_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/identitystore_group) | data source |
-| [aws_ssoadmin_instances](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssoadmin_instances) | data source |
-| [aws_ssoadmin_permission_set](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssoadmin_permission_set) | data source |
+|------|------|
+| [aws_ssoadmin_account_assignment.this](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/ssoadmin_account_assignment) | resource |
+| [aws_ssoadmin_permission_set.this](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/ssoadmin_permission_set) | resource |
+| [aws_ssoadmin_permission_set_inline_policy.this](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/ssoadmin_permission_set_inline_policy) | resource |
+| [aws_iam_policy_document.this](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/data-sources/iam_policy_document) | data source |
+| [aws_identitystore_group.this](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/data-sources/identitystore_group) | data source |
+| [aws_identitystore_user.this](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/data-sources/identitystore_user) | data source |
+| [aws_ssoadmin_instances.this](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/data-sources/ssoadmin_instances) | data source |
+| [aws_ssoadmin_permission_set.this](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/data-sources/ssoadmin_permission_set) | data source |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_account_identifiers"></a> [account\_identifiers](#input\_account\_identifiers) | A 10-12 digit string used to identify an AWS account | `list(string)` | n/a | yes |
+| <a name="input_attributes"></a> [attributes](#input\_attributes) | A list of user attributes to use in policies to control access to resources | `map(string)` | `{}` | no |
+| <a name="input_conditional_actions"></a> [conditional\_actions](#input\_conditional\_actions) | Actions allowed on a resource when the principal tags match the resource | `list(string)` | n/a | yes |
+| <a name="input_permission_set_desc"></a> [permission\_set\_desc](#input\_permission\_set\_desc) | A description for the inline policy | `string` | `""` | no |
+| <a name="input_permission_set_name"></a> [permission\_set\_name](#input\_permission\_set\_name) | The name of the inline policy created for a single IAM identity | `string` | n/a | yes |
+| <a name="input_principal_type"></a> [principal\_type](#input\_principal\_type) | The entity type for which the assignment will be created | `string` | `"GROUP"` | no |
+| <a name="input_readonly_actions"></a> [readonly\_actions](#input\_readonly\_actions) | Actions allowed on a resource, regardless of what tags the principal has | `list(string)` | n/a | yes |
+| <a name="input_session_duration"></a> [session\_duration](#input\_session\_duration) | Session Timeout for SSO | `string` | `"PT1H"` | no |
+| <a name="input_sso_group_name"></a> [sso\_group\_name](#input\_sso\_group\_name) | The group which to assign the permission set to | `string` | `""` | no |
+| <a name="input_user_principal_id"></a> [user\_principal\_id](#input\_user\_principal\_id) | The ID of the user | `string` | `""` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_group_id"></a> [group\_id](#output\_group\_id) | The group ID that has the custom permission set attached to it |
+| <a name="output_permission_set_arn"></a> [permission\_set\_arn](#output\_permission\_set\_arn) | The Amazon Resource Number (ARN) of the custom permission set |
+| <a name="output_permission_set_created_date"></a> [permission\_set\_created\_date](#output\_permission\_set\_created\_date) | The date the Permission Set was created in RFC3339 format |
+<!-- END_TF_DOCS -->
