@@ -123,6 +123,8 @@ No modules.
 | <a name="input_permission_set_desc"></a> [permission\_set\_desc](#input\_permission\_set\_desc) | A description for the inline policy | `string` | `""` | no |
 | <a name="input_permission_set_name"></a> [permission\_set\_name](#input\_permission\_set\_name) | The name of the inline policy created for a single IAM identity | `string` | n/a | yes |
 | <a name="input_principal_type"></a> [principal\_type](#input\_principal\_type) | The entity type for which the assignment will be created | `string` | `"GROUP"` | no |
+| <a name="input_resources_conditional"></a> [resources\_conditional](#input\_resources\_conditional) | Resources users can perform actions on when the tags match | `list(string)` | <pre>[<br>  "*"<br>]</pre> | no |
+| <a name="input_resources_readonly"></a> [resources\_readonly](#input\_resources\_readonly) | Resources users are allowed to read-only | `list(string)` | <pre>[<br>  "*"<br>]</pre> | no |
 | <a name="input_session_duration"></a> [session\_duration](#input\_session\_duration) | Session Timeout for SSO | `string` | `"PT1H"` | no |
 | <a name="input_sso_group_name"></a> [sso\_group\_name](#input\_sso\_group\_name) | The group which to assign the permission set to | `string` | `""` | no |
 | <a name="input_user_principal_id"></a> [user\_principal\_id](#input\_user\_principal\_id) | The ID of the user | `string` | `""` | no |
