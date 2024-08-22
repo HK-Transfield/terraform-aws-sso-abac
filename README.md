@@ -2,15 +2,15 @@
 
 ## Usage
 ```hcl
-module "sso_abac" {
+module "aws_sso_abac" {
   source                 = "./modules/aws-sso-abac-access"
 
-  policy_name            = "my-permission-set"
-  aws_account_identifier = "123456789012" # change to your account number
+  permission_name        = "my-permission-set"
+  aws_account_identifier = ["123456789012"] # change to your account number
   
-  attributes             = ["CostCenter", "Organization", "Division"]
-  actions_no_tags        = ["ec2:DescribeInstances"]
-  actions_matching_tags  = ["ec2:StartInstances", "ec2:StopInstances"]
+  attributes           = ["CostCenter", "Organization", "Division"]
+  actions_readonly     = ["ec2:DescribeInstances"]
+  actions_conditional  = ["ec2:StartInstances", "ec2:StopInstances"]
 }
 ```
 
@@ -117,12 +117,12 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_account_identifiers"></a> [account\_identifiers](#input\_account\_identifiers) | A 10-12 digit string used to identify an AWS account | `list(string)` | n/a | yes |
+| <a name="input_actions_conditional"></a> [actions\_conditional](#input\_actions\_conditional) | Actions allowed on a resource when the principal tags match the resource | `list(string)` | n/a | yes |
+| <a name="input_actions_readonly"></a> [actions\_readonly](#input\_actions\_readonly) | Actions allowed on a resource, regardless of what tags the principal has | `list(string)` | n/a | yes |
 | <a name="input_attributes"></a> [attributes](#input\_attributes) | A list of user attributes to use in policies to control access to resources | `map(string)` | `{}` | no |
-| <a name="input_conditional_actions"></a> [conditional\_actions](#input\_conditional\_actions) | Actions allowed on a resource when the principal tags match the resource | `list(string)` | n/a | yes |
 | <a name="input_permission_set_desc"></a> [permission\_set\_desc](#input\_permission\_set\_desc) | A description for the inline policy | `string` | `""` | no |
 | <a name="input_permission_set_name"></a> [permission\_set\_name](#input\_permission\_set\_name) | The name of the inline policy created for a single IAM identity | `string` | n/a | yes |
 | <a name="input_principal_type"></a> [principal\_type](#input\_principal\_type) | The entity type for which the assignment will be created | `string` | `"GROUP"` | no |
-| <a name="input_readonly_actions"></a> [readonly\_actions](#input\_readonly\_actions) | Actions allowed on a resource, regardless of what tags the principal has | `list(string)` | n/a | yes |
 | <a name="input_session_duration"></a> [session\_duration](#input\_session\_duration) | Session Timeout for SSO | `string` | `"PT1H"` | no |
 | <a name="input_sso_group_name"></a> [sso\_group\_name](#input\_sso\_group\_name) | The group which to assign the permission set to | `string` | `""` | no |
 | <a name="input_user_principal_id"></a> [user\_principal\_id](#input\_user\_principal\_id) | The ID of the user | `string` | `""` | no |
