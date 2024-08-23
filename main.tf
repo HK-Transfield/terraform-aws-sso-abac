@@ -68,27 +68,41 @@ resource "aws_ssoadmin_permission_set_inline_policy" "this" {
 ################################################################################
 
 data "aws_identitystore_user" "this" {
+  count             = strcontains(var.principal_type, "USER") ? 1 : 0
   identity_store_id = local.sso_instance_id
+
+  alternate_identifier {
+    unique_attribute {
+      attribute_path  = "UserName"
+      attribute_value = var.principal_name != "" ? var.principal_name : var.permission_set_name
+    }
+  }
 }
 
 data "aws_identitystore_group" "this" {
+  count             = strcontains(var.principal_type, "GROUP") ? 1 : 0
   identity_store_id = local.sso_instance_id
 
   alternate_identifier {
     unique_attribute {
       attribute_path  = "DisplayName"
-      attribute_value = var.sso_group_name != "" ? var.sso_group_name : var.permission_set_name
+      attribute_value = var.principal_name != "" ? var.principal_name : var.permission_set_name
     }
   }
 }
 
+locals {
+  user_id      = length(data.aws_identitystore_user.this) > 0 ? data.aws_identitystore_user.this[0].id : null
+  group_id     = length(data.aws_identitystore_group.this) > 0 ? data.aws_identitystore_group.this[0].id : null
+  principal_id = coalesce(local.user_id, local.group_id)
+}
+
 resource "aws_ssoadmin_account_assignment" "this" {
   for_each           = toset(var.account_identifiers)
-  principal_id       = var.user_principal_id != "" ? var.user_principal_id : data.aws_identitystore_group.this.id
+  principal_id       = local.principal_id
   permission_set_arn = data.aws_ssoadmin_permission_set.this.arn
   instance_arn       = local.sso_instance_arn
   principal_type     = var.principal_type
   target_id          = each.value
-  target_type        = "AWS_ACCOUNT" # Keep entity type for which the assignment will be created as is
+  target_type        = "AWS_ACCOUNT"
 }
-
