@@ -41,7 +41,7 @@ module "aws_sso_abac" {
   principal_type         = "GROUP"
   aws_account_identifier = ["123456789012"] # change to your account number
 
-  attributes          = ["CostCenter", "Organization", "Division"]
+  attributes          = local.attributes
   actions_readonly    = ["ec2:DescribeInstances"]
   actions_conditional = ["ec2:StartInstances", "ec2:StopInstances"]
 }
