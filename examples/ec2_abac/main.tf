@@ -8,6 +8,11 @@ locals {
   region = "ap-southeast-2"
 }
 
+
+################################################################################
+# Supporting Resources
+################################################################################
+
 locals {
   attributes = {
     "CostCenter"   = "$${path:enterprise.costCenter}"
@@ -15,10 +20,6 @@ locals {
     "Division"     = "$${path:enterprise.division}"
   }
 }
-
-################################################################################
-# Supporting Resources
-################################################################################
 
 resource "aws_ssoadmin_instance_access_control_attributes" "this" {
   instance_arn = tolist(data.aws_ssoadmin_instances.this.arns)[0]
@@ -38,16 +39,20 @@ resource "aws_ssoadmin_instance_access_control_attributes" "this" {
 # SSO ABAC Module
 ################################################################################
 
-locals {
-  actions_allowed_nonconditional = ["ec2:DescribeInstances"]
-  actions_allowed_matching_tags  = ["ec2:StartInstances", "ec2:StopInstances"]
-}
+module "ec2_abac" {
+  source              = "../.."
+  permission_set_name = "EC2AllowAccessEngineers"
+  principal_name      = "MyPrincipalName"
+  principal_type      = "GROUP"
+  account_identifiers = ["123456789012"] # Replace with your own AWS Account IDs
+  attributes          = local.attributes
 
-module "ec2_abac_tempest" {
-  source                         = "../.."
-  policy_name                    = "AllowEC2Engineers"
-  account_identifiers            = ["123456789012", "210987654321"] # Replace with your own AWS Account IDs
-  attributes                     = local.attributes
-  actions_allowed_nonconditional = local.actions_allowed_nonconditional
-  actions_allowed_matching_tags  = local.actions_allowed_matching_tags
+  actions_readonly = [
+    "ec2:DescribeInstances",
+  ]
+
+  actions_conditional = [
+    "ec2:StartInstances",
+    "ec2:StopInstances"
+  ]
 }
