@@ -24,29 +24,22 @@ variable "session_duration" {
 ################################################################################
 
 variable "account_identifiers" {
-  description = "A 10-12 digit string used to identify an AWS account"
+  description = "A 10-12 digit string used to identify AWS accounts"
   type        = list(string)
 }
 
 variable "principal_type" {
   description = "The entity type for which the assignment will be created"
   type        = string
-  default     = "GROUP" # Typically don't want to assign permissions to just users
-}
-
-variable "user_principal_id" {
-  description = "The ID of the user"
-  type        = string
-  default     = ""
 
   validation {
-    condition     = var.principal == "USER" && var.user_principal_id != ""
-    error_message = "The principal type must be 'USER'"
+    condition     = strcontains(var.principal_type, "GROUP") != true || strcontains(var.principal_type, "USER") != true
+    error_message = "Principal type can only be GROUP or USER"
   }
 }
 
-variable "sso_group_name" {
-  description = "The group which to assign the permission set to"
+variable "principal_name" {
+  description = "The name of the principal to assign the permission set to"
   type        = string
   default     = ""
 }
