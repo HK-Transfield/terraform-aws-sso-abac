@@ -1,16 +1,9 @@
-################################################################################
-# title: AWS IAM Identity Center with ABAC Access
-#
-# This module helps with configuration tasks necessary to prepare AWS 
-# resources and to set up IAM Identity Center for ABAC access.
-################################################################################
-
-data "aws_ssoadmin_instances" "this" {} # need to grab the sso instance data
-
 locals {
   sso_instance_arn = tolist(data.aws_ssoadmin_instances.this.arns)[0]
   sso_instance_id  = tolist(data.aws_ssoadmin_instances.this.identity_store_ids)[0]
 }
+
+data "aws_ssoadmin_instances" "this" {} # need to grab the sso instance data
 
 ################################################################################
 # IAM Policies and SSO Permission Sets
@@ -67,6 +60,12 @@ resource "aws_ssoadmin_permission_set_inline_policy" "this" {
 # IAM Identity Center
 ################################################################################
 
+locals {
+  user_id      = length(data.aws_identitystore_user.this) > 0 ? data.aws_identitystore_user.this[0].id : null
+  group_id     = length(data.aws_identitystore_group.this) > 0 ? data.aws_identitystore_group.this[0].id : null
+  principal_id = coalesce(local.user_id, local.group_id)
+}
+
 data "aws_identitystore_user" "this" {
   count             = strcontains(var.principal_type, "USER") ? 1 : 0
   identity_store_id = local.sso_instance_id
@@ -89,12 +88,6 @@ data "aws_identitystore_group" "this" {
       attribute_value = var.principal_name != "" ? var.principal_name : var.permission_set_name
     }
   }
-}
-
-locals {
-  user_id      = length(data.aws_identitystore_user.this) > 0 ? data.aws_identitystore_user.this[0].id : null
-  group_id     = length(data.aws_identitystore_group.this) > 0 ? data.aws_identitystore_group.this[0].id : null
-  principal_id = coalesce(local.user_id, local.group_id)
 }
 
 resource "aws_ssoadmin_account_assignment" "this" {
