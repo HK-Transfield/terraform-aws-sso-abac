@@ -2,15 +2,14 @@ provider "aws" {
   region = local.region
 }
 
-data "aws_ssoadmin_instances" "this" {}
-
 locals {
   region = "ap-southeast-2"
 }
 
+data "aws_ssoadmin_instances" "this" {}
 
 ################################################################################
-# Supporting Resources
+# IAM Identity Center Access Control Attributes
 ################################################################################
 
 locals {
