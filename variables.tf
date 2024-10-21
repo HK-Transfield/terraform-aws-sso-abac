@@ -44,6 +44,12 @@ variable "principal_name" {
   default     = ""
 }
 
+variable "principal_id" {
+  description = "The unique identifier of the principal to assign the permission set to"
+  type        = string
+  default     = ""
+}
+
 ################################################################################
 # IAM Policy Attributes
 ################################################################################

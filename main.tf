@@ -63,7 +63,7 @@ resource "aws_ssoadmin_permission_set_inline_policy" "this" {
 locals {
   user_id      = length(data.aws_identitystore_user.this) > 0 ? data.aws_identitystore_user.this[0].id : null
   group_id     = length(data.aws_identitystore_group.this) > 0 ? data.aws_identitystore_group.this[0].id : null
-  principal_id = coalesce(local.user_id, local.group_id)
+  principal_id = var.principal_id != "" ? var.principal_id : coalesce(local.user_id, local.group_id)
 }
 
 data "aws_identitystore_user" "this" {
