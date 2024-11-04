@@ -2,17 +2,10 @@ provider "aws" {
   region = local.region
 }
 
-locals {
-  region = "ap-southeast-2"
-}
-
 data "aws_ssoadmin_instances" "this" {}
 
-################################################################################
-# IAM Identity Center Access Control Attributes
-################################################################################
-
 locals {
+  region = "ap-southeast-2"
   attributes = {
     "CostCenter"   = "$${path:enterprise.costCenter}"
     "Organization" = "$${path:enterprise.organization}"
@@ -20,26 +13,21 @@ locals {
   }
 }
 
-resource "aws_ssoadmin_instance_access_control_attributes" "this" {
-  instance_arn = tolist(data.aws_ssoadmin_instances.this.arns)[0]
+################################################################################
+# IAM Identity Center ABAC Attributes
+################################################################################
 
-  dynamic "attribute" {
-    for_each = local.attributes
-    content {
-      key = attribute.key
-      value {
-        source = [attribute.value]
-      }
-    }
-  }
+module "ec2_abac_attributes" {
+  source     = "../../modules/abac-attributes"
+  attributes = local.attributes
 }
 
 ################################################################################
-# SSO ABAC Module
+# IAM Identity Center ABAC Permission Sets
 ################################################################################
 
-module "ec2_abac" {
-  source              = "../.."
+module "ec2_abac_permissions" {
+  source              = "../../modules/abac-permissions"
   permission_set_name = "EC2AllowAccessEngineers"
   principal_name      = "MyPrincipalName"
   principal_type      = "GROUP"
