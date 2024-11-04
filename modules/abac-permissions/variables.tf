@@ -31,6 +31,7 @@ variable "account_identifiers" {
 variable "principal_type" {
   description = "The entity type for which the assignment will be created"
   type        = string
+  default     = "GROUP"
 
   validation {
     condition     = strcontains(var.principal_type, "GROUP") != true || strcontains(var.principal_type, "USER") != true
