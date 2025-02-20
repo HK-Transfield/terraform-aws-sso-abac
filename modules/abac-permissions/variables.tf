@@ -5,6 +5,11 @@
 variable "permission_set_name" {
   description = "The name of the inline policy created for a single IAM identity"
   type        = string
+
+  validation {
+    condition     = length(var.permission_set_name) >= 1 && length(var.permission_set_name) <= 32
+    error_message = "Permission set name must be between 1 and 32 characters"
+  }
 }
 
 variable "permission_set_desc" {
@@ -17,6 +22,11 @@ variable "session_duration" {
   description = "Session Timeout for SSO"
   type        = string
   default     = "PT1H"
+
+  validation {
+    condition     = can(regex("^PT(([1-9]|1[0-2])H|([1-9]|1[0-9]|2[0-4])H)$", var.session_duration))
+    error_message = "Session duration must be between 1-12 hours in ISO 8601 format"
+  }
 }
 
 ################################################################################
@@ -83,6 +93,16 @@ variable "resources_conditional" {
 
 variable "attributes" {
   description = "A list of user attributes to use in policies to control access to resources"
+  type        = map(string)
+  default     = {}
+}
+
+################################################################################
+# General Configurations
+################################################################################
+
+variable "tags" {
+  description = "A map of tags to assign to the resources created by this module"
   type        = map(string)
   default     = {}
 }
