@@ -1,6 +1,8 @@
 locals {
-  sso_instance_arn = tolist(data.aws_ssoadmin_instances.this.arns)[0]
-  sso_instance_id  = tolist(data.aws_ssoadmin_instances.this.identity_store_ids)[0]
+  sso_instance_arns = tolist(data.aws_ssoadmin_instances.this.arns)
+  sso_instance_arn  = length(local.sso_instance_arns) > 0 ? local.sso_instance_arns[0] : ""
+  sso_instance_ids  = tolist(data.aws_ssoadmin_instances.this.identity_store_ids)
+  sso_instance_id   = length(local.sso_instance_ids) > 0 ? local.sso_instance_ids[0] : ""
 }
 
 data "aws_ssoadmin_instances" "this" {} # need to grab the sso instance data
@@ -48,6 +50,13 @@ resource "aws_ssoadmin_permission_set" "this" {
   description      = var.permission_set_desc != "" ? var.permission_set_desc : var.permission_set_name
   instance_arn     = local.sso_instance_arn
   session_duration = var.session_duration
+
+  tags = merge(
+    var.tags,
+    {
+      "Name" = var.permission_set_name
+    }
+  )
 }
 
 resource "aws_ssoadmin_permission_set_inline_policy" "this" {
@@ -61,8 +70,10 @@ resource "aws_ssoadmin_permission_set_inline_policy" "this" {
 ################################################################################
 
 locals {
-  user_id      = length(data.aws_identitystore_user.this) > 0 ? data.aws_identitystore_user.this[0].id : null
-  group_id     = length(data.aws_identitystore_group.this) > 0 ? data.aws_identitystore_group.this[0].id : null
+  user_exists  = length(data.aws_identitystore_user.this) > 0
+  group_exists = length(data.aws_identitystore_group.this) > 0
+  user_id      = local.user_exists ? data.aws_identitystore_user.this[0].id : null
+  group_id     = local.group_exists ? data.aws_identitystore_group.this[0].id : null
   principal_id = var.principal_id != "" ? var.principal_id : coalesce(local.user_id, local.group_id)
 }
 
@@ -90,8 +101,19 @@ data "aws_identitystore_group" "this" {
   }
 }
 
-resource "aws_ssoadmin_account_assignment" "this" {
+
+data "aws_ssoadmin_account_assignment" "existing" {
   for_each           = toset(var.account_identifiers)
+  instance_arn       = local.sso_instance_arn
+  permission_set_arn = data.aws_ssoadmin_permission_set.this.arn
+  principal_id       = local.principal_id
+  principal_type     = var.principal_type
+  target_id          = each.value
+  target_type        = "AWS_ACCOUNT"
+}
+
+resource "aws_ssoadmin_account_assignment" "this" {
+  for_each           = { for k, v in var.account_identifiers : k => v if lookup(data.aws_ssoadmin_account_assignment.existing, k, null) == null }
   principal_id       = local.principal_id
   permission_set_arn = data.aws_ssoadmin_permission_set.this.arn
   instance_arn       = local.sso_instance_arn
