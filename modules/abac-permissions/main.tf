@@ -101,17 +101,6 @@ data "aws_identitystore_group" "this" {
   }
 }
 
-# * This data source does not exist
-# data "aws_ssoadmin_account_assignment" "existing" {
-#   for_each           = toset(var.account_identifiers)
-#   instance_arn       = local.sso_instance_arn
-#   permission_set_arn = data.aws_ssoadmin_permission_set.this.arn
-#   principal_id       = local.principal_id
-#   principal_type     = var.principal_type
-#   target_id          = each.value
-#   target_type        = "AWS_ACCOUNT"
-# }
-
 resource "aws_ssoadmin_account_assignment" "this" {
   for_each           = toset(var.account_identifiers)
   principal_id       = local.principal_id
