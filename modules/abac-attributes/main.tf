@@ -1,7 +1,6 @@
 ################################################################################
 # IAM Identity Center Access Control Attributes
 ################################################################################
-
 data "aws_ssoadmin_instances" "this" {}
 
 locals {
@@ -9,18 +8,14 @@ locals {
   sso_instance_arn  = length(local.sso_instance_arns) > 0 ? local.sso_instance_arns[0] : ""
 }
 
-
 resource "aws_ssoadmin_instance_access_control_attributes" "this" {
-  count = length(keys(var.attributes)) > 0 ? 1 : 0
-
+  count        = length(keys(var.attributes)) > 0 ? 1 : 0
   instance_arn = local.sso_instance_arn
 
   dynamic "attribute" {
     for_each = var.attributes
-
     content {
       key = attribute.key
-
       value {
         source = [attribute.value]
       }
